@@ -6,7 +6,7 @@ namespace WayPoint_Publisher
 {
 WayPoint_Publisher::WayPoint_Publisher(rclcpp::NodeOptions options): Node("waypoint_publisher", options)
 {
-	filename = this->declare_parameter("filename", " ");
+  filename = this->declare_parameter("filename", " ");
   waypoint_follower_action_client_ =
     rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
     this,
@@ -79,8 +79,8 @@ void WayPoint_Publisher::get_Waypoints()
   }
   else
   {
-  	RCLCPP_ERROR(this->get_logger(), "WayPoint Publisher could not open the waypoint file:(");
- 		return;
+    RCLCPP_ERROR(this->get_logger(), "WayPoint Publisher could not open the waypoint file:(");
+    return;
   }
   my_waypoints.close();
 }
