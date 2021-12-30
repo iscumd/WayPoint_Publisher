@@ -73,9 +73,9 @@ void WayPoint_Publisher::get_Waypoints()
           pose.header.stamp = this->get_clock()->now();
           waypoints_.push_back(pose);
           break;
-  			}
-  		}
   	}
+      }
+    }
   }
   else
   {
