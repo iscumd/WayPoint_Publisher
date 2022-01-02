@@ -5,4 +5,3 @@ in points described of by x,y,z,roll,pitch,yaw. it then hooks into
 the initial pose message to ensure the initial pose is set and its 
 set in the map frame before it publishes the vector of poses to the 
 WayPoint Follower.
-
