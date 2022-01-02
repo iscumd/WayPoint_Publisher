@@ -80,7 +80,7 @@ void WayPoint_Publisher::get_Waypoints()
   else
   {
     RCLCPP_ERROR(this->get_logger(), "WayPoint Publisher could not open the waypoint file:(");
-     return;
+    return;
   }
   my_waypoints.close();
 }
