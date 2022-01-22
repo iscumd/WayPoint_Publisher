@@ -47,12 +47,12 @@ private:
   void get_Waypoints();
 
   std::string filename;
-  std::vector<geometry_msgs::msg::PoseStamped> waypoints_;
+  std::vector<geometry_msgs::msg::PoseStamped> waypoints;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initialpose;
   using WaypointFollowerGoalHandle = rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowWaypoints>;
-  rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr waypoint_follower_action_client_;
-  nav2_msgs::action::FollowWaypoints::Goal waypoint_follower_goal_;
-  WaypointFollowerGoalHandle::SharedPtr waypoint_follower_goal_handle_;
+  rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr waypoint_follower_action_client;
+  nav2_msgs::action::FollowWaypoints::Goal waypoint_follower_goal;
+  WaypointFollowerGoalHandle::SharedPtr waypoint_follower_goal_handle;
 };
 }  // namespace WayPoint Publisher
 

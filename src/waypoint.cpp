@@ -7,11 +7,11 @@ namespace WayPoint_Publisher
 WayPoint_Publisher::WayPoint_Publisher(rclcpp::NodeOptions options): Node("waypoint_publisher", options)
 {
   filename = this->declare_parameter("filename", " ");
-  waypoint_follower_action_client_ =
+  waypoint_follower_action_client =
     rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
     this,
     "FollowWaypoints");
-  waypoint_follower_goal_ = nav2_msgs::action::FollowWaypoints::Goal();
+  waypoint_follower_goal = nav2_msgs::action::FollowWaypoints::Goal();
 
   get_Waypoints();
 
@@ -71,7 +71,7 @@ void WayPoint_Publisher::get_Waypoints()
           pose.pose.orientation.w = quaternion.getW();
           pose.header.frame_id = "map";
           pose.header.stamp = this->get_clock()->now();
-          waypoints_.push_back(pose);
+          waypoints.push_back(pose);
           break;
         }
       }
@@ -92,9 +92,9 @@ over the Action server
 */
 void WayPoint_Publisher::startWaypointFollowing()
 {
-  std::vector<geometry_msgs::msg::PoseStamped> poses = waypoints_;
+  std::vector<geometry_msgs::msg::PoseStamped> poses = waypoints;
   auto is_action_server_ready =
-    waypoint_follower_action_client_->wait_for_action_server(std::chrono::seconds(5));
+    waypoint_follower_action_client->wait_for_action_server(std::chrono::seconds(5));
   if (!is_action_server_ready) {
     RCLCPP_ERROR(
       this->get_logger(), "FollowWaypoints Action Server is not available:("
@@ -102,12 +102,12 @@ void WayPoint_Publisher::startWaypointFollowing()
     return;
   }
   
-  waypoint_follower_goal_.poses = poses;
+  waypoint_follower_goal.poses = poses;
 
   RCLCPP_INFO(
     this->get_logger(), "Sending a path of %zu waypoints:)",
-    waypoint_follower_goal_.poses.size());
-  for (auto waypoint : waypoint_follower_goal_.poses) {
+    waypoint_follower_goal.poses.size());
+  for (auto waypoint : waypoint_follower_goal.poses) {
     RCLCPP_DEBUG(
       this->get_logger(),
       "\t(%lf, %lf)", waypoint.pose.position.x, waypoint.pose.position.y);
@@ -119,12 +119,12 @@ void WayPoint_Publisher::startWaypointFollowing()
   send_goal_options.result_callback = [](auto) {};  
   
   auto future_goal_handle =
-    waypoint_follower_action_client_->async_send_goal(waypoint_follower_goal_, send_goal_options);
+    waypoint_follower_action_client->async_send_goal(waypoint_follower_goal, send_goal_options);
 
   // Get the goal handle and save so that we can check on completion
-  waypoint_follower_goal_handle_ = future_goal_handle.get();
-  std::cout << waypoint_follower_goal_handle_ << std::endl;
-  if (!waypoint_follower_goal_handle_) {
+  waypoint_follower_goal_handle = future_goal_handle.get();
+  std::cout << waypoint_follower_goal_handle << std::endl;
+  if (!waypoint_follower_goal_handle) {
     RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server:(");
     return;
   }
