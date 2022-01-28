@@ -1,8 +1,5 @@
 # <NodeNameHere>
 
-# File
-`/path/to/.cpp`
-
 ## Summary
 
 Summary of functionality
@@ -30,7 +27,3 @@ This node trash
 './path/to/launchfile'
 
 other launchfile stuff people should know, like a usage section
-
-## Args 
-
-launchfile args
