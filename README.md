@@ -1,4 +1,4 @@
-# <Waypoint Publisher>
+# Waypoint Publisher
 
 ## Summary
 This package contains a ROS2 node that interfaces with the 
