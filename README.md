@@ -23,16 +23,10 @@ WayPoint Follower.
 ## Params 
 
 - this package can taken in one param which is a csv file of points you want the robot to follow in order
-
-## Potential Improvements
-
-one potential improvement is finding a better way to parse the csv file 
-
+ 
 # Launch 
 
-'launch/waypoint.launch.py'
-
-by default follow waypoints is set to default. so I exposed a launch arguement called follow_waypoints that you would tack onto the end  of your launch command.
+by default follow waypoints is set to false. so I exposed a launch arguement called follow_waypoints that you would tack onto the end  of your launch command.
 for example to launch mammoth in waypoint mode you would type `ros2 launch mammoth_snowplow mammoth.launch.py follow_waypoints:=true`
 and the node will listen for the initialpose to be published and then start navigating from there.
 
