@@ -10,7 +10,7 @@ WayPoint_Publisher::WayPoint_Publisher(rclcpp::NodeOptions options): Node("waypo
   waypoint_follower_action_client =
     rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
     this,
-    "FollowWaypoints");
+    "/follow_waypoints");
   waypoint_follower_goal = nav2_msgs::action::FollowWaypoints::Goal();
 
   get_Waypoints();
