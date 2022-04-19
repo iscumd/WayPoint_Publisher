@@ -7,18 +7,30 @@ namespace WayPoint_Publisher
 WayPoint_Publisher::WayPoint_Publisher(rclcpp::NodeOptions options): Node("waypoint_publisher", options)
 {
   filename = this->declare_parameter("filename", " ");
-  waypoint_follower_action_client =
-    rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
-    this,
-    "/follow_waypoints");
-  waypoint_follower_goal = nav2_msgs::action::FollowWaypoints::Goal();
+  follow_gps = this->declare_parameter("follow_gps", true);
 
-  get_Waypoints();
+  // follow waypoints if false, else follow gps points
+  if(!follow_gps)
+  {
+    waypoint_follower_action_client =
+      rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
+      this,
+      "/follow_waypoints");
+    waypoint_follower_goal = nav2_msgs::action::FollowWaypoints::Goal();
 
-  // hook into the initial pose topic
-  initialpose = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
-    "/initialpose", 10,
-    std::bind(&WayPoint_Publisher::waypoint_callback, this, std::placeholders::_1));
+    get_Waypoints();
+
+    // hook into the initial pose topic
+    initialpose = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
+      "/initialpose", 10,
+      std::bind(&WayPoint_Publisher::waypoint_callback, this, std::placeholders::_1));
+  }
+  else
+  {
+    gps = this->create_subscription<geometry_msgs::msg::PoseArray>(
+      "/gps/points", 10, 
+      std::bind(&WayPoint_Publisher::gps_callback, this, std::placeholders::_1));
+  }
 }
 
 /* 
@@ -92,7 +104,13 @@ over the Action server
 */
 void WayPoint_Publisher::startWaypointFollowing()
 {
-  std::vector<geometry_msgs::msg::PoseStamped> poses = waypoints;
+  std::vector<geometry_msgs::msg::PoseStamped> poses;
+
+  if(follow_gps)
+    poses = waypoints;
+  else
+    poses = gps_points;
+
   auto is_action_server_ready =
     waypoint_follower_action_client->wait_for_action_server(std::chrono::seconds(5));
   if (!is_action_server_ready) {
@@ -113,11 +131,12 @@ void WayPoint_Publisher::startWaypointFollowing()
       "\t(%lf, %lf)", waypoint.pose.position.x, waypoint.pose.position.y);
   }
 
+
   // Enable result awareness by providing an empty lambda function
   auto send_goal_options =
     rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SendGoalOptions();
   send_goal_options.result_callback = [](auto) {};  
-  
+
   auto future_goal_handle =
     waypoint_follower_action_client->async_send_goal(waypoint_follower_goal, send_goal_options);
 
@@ -139,6 +158,20 @@ void WayPoint_Publisher::waypoint_callback(const geometry_msgs::msg::PoseWithCov
   if(initialpose->header.frame_id != "map") {
     RCLCPP_ERROR(this->get_logger(), "Initial Pose was not set in the Map Frame:(");
     return;
+  }
+  startWaypointFollowing();
+}
+
+void WayPoint_Publisher::gps_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
+{
+  // populate the vector of gps points 
+  for(auto point : msg->poses)
+  {
+    geometry_msgs::msg::PoseStamped pointStamped;
+    pointStamped.pose = point;
+    pointStamped.header.frame_id = "map";
+    pointStamped.header.stamp = this->get_clock()->now();
+    gps_points.push_back(pointStamped);
   }
   startWaypointFollowing();
 }

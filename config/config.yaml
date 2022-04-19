@@ -1,0 +1,5 @@
+waypoint_publisher:
+  ros__parameters:
+    filename: '/src/mammoth'
+    follow_gps: false
+

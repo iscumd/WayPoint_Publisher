@@ -33,6 +33,7 @@
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 #include "nav2_util/geometry_utils.hpp"
 #include "std_msgs/msg/header.hpp"
+#include "geometry_msgs/msg/pose_array.hpp"
 
 namespace WayPoint_Publisher
 {
@@ -45,14 +46,18 @@ private:
   void waypoint_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr initialpose);
   void startWaypointFollowing();
   void get_Waypoints();
+  void gps_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
 
   std::string filename;
   std::vector<geometry_msgs::msg::PoseStamped> waypoints;
+  std::vector<geometry_msgs::msg::PoseStamped> gps_points;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initialpose;
+  rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr gps;
   using WaypointFollowerGoalHandle = rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowWaypoints>;
   rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr waypoint_follower_action_client;
   nav2_msgs::action::FollowWaypoints::Goal waypoint_follower_goal;
   WaypointFollowerGoalHandle::SharedPtr waypoint_follower_goal_handle;
+  bool follow_gps{};
 };
 }  // namespace WayPoint Publisher
 
