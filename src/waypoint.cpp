@@ -104,12 +104,7 @@ over the Action server
 */
 void WayPoint_Publisher::startWaypointFollowing()
 {
-  std::vector<geometry_msgs::msg::PoseStamped> poses;
-
-  if(follow_gps)
-    poses = waypoints;
-  else
-    poses = gps_points;
+  std::vector<geometry_msgs::msg::PoseStamped> poses = waypoints;
 
   auto is_action_server_ready =
     waypoint_follower_action_client->wait_for_action_server(std::chrono::seconds(5));
@@ -171,7 +166,7 @@ void WayPoint_Publisher::gps_callback(const geometry_msgs::msg::PoseArray::Share
     pointStamped.pose = point;
     pointStamped.header.frame_id = "map";
     pointStamped.header.stamp = this->get_clock()->now();
-    gps_points.push_back(pointStamped);
+    waypoints.push_back(pointStamped);
   }
   startWaypointFollowing();
 }

@@ -50,7 +50,6 @@ private:
 
   std::string filename;
   std::vector<geometry_msgs::msg::PoseStamped> waypoints;
-  std::vector<geometry_msgs::msg::PoseStamped> gps_points;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initialpose;
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr gps;
   using WaypointFollowerGoalHandle = rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowWaypoints>;
