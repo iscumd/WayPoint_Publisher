@@ -125,6 +125,7 @@ void WayPoint_Publisher::get_Waypoints()
 void WayPoint_Publisher::startWaypointFollowing()
 {
   std::vector<geometry_msgs::msg::PoseStamped> poses = waypoints;
+  waypoints.clear();
 
   auto is_action_server_ready =
       waypoint_follower_action_client->wait_for_action_server(
