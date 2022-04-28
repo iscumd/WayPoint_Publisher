@@ -1,5 +1,4 @@
 waypoint_publisher:
   ros__parameters:
-    filename: '/src/mammoth'
+    filename: '/src/mammoth' # path to waypoint csv file
     follow_gps: false
-

@@ -27,37 +27,69 @@
 #include <string>
 #include <vector>
 
+#include "geometry_msgs/msg/pose_array.hpp"
 #include "nav2_msgs/action/follow_waypoints.hpp"
+#include "nav2_util/geometry_utils.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-#include "nav2_util/geometry_utils.hpp"
 #include "std_msgs/msg/header.hpp"
-#include "geometry_msgs/msg/pose_array.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 namespace WayPoint_Publisher
 {
 class WayPoint_Publisher : public rclcpp::Node
 {
-public:
+  public:
   explicit WayPoint_Publisher(rclcpp::NodeOptions options);
 
-private:
-  void waypoint_callback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr initialpose);
-  void startWaypointFollowing();
+  private:
+  /**
+   * @brief Takes in a csv file of waypoints 
+   * and formats the points into a vector PoseStamped poses
+   */
   void get_Waypoints();
+
+  /**
+   * @brief Main Callback function that is called
+   * after the intial pose is set
+   * @param initialpose 
+   */
+  void waypoint_callback(
+      const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr
+          initialpose);
+
+  /**
+   * @brief Take in an order set of gps coordinates, formats 
+   * them as a vector of pose Stamped and sends them off to waypoint follower
+   * @param msg 
+   */
   void gps_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
 
-  std::string filename;
+  /**
+   * @brief Takes in the vector of waypoints 
+   * and publishes it to the WayPoint Follower node 
+   * over the Action server 
+   */
+  void startWaypointFollowing();
+
+  // class variables
+  std::string filename{};
+  bool follow_gps{};
   std::vector<geometry_msgs::msg::PoseStamped> waypoints;
-  rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initialpose;
+
+  // Subscribers
+  rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr
+      initialpose;
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr gps;
-  using WaypointFollowerGoalHandle = rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowWaypoints>;
-  rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr waypoint_follower_action_client;
+
+  // Action server
+  using WaypointFollowerGoalHandle =
+      rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowWaypoints>;
+  rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr
+      waypoint_follower_action_client;
   nav2_msgs::action::FollowWaypoints::Goal waypoint_follower_goal;
   WaypointFollowerGoalHandle::SharedPtr waypoint_follower_goal_handle;
-  bool follow_gps{};
 };
-}  // namespace WayPoint Publisher
+}  // namespace WayPoint_Publisher
 
 #endif  // WAYPOINT_PUBLISHER__WAYPOINT_PUBLISHER_HPP_
