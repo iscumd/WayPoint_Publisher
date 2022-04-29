@@ -31,16 +31,16 @@ WayPoint_Publisher::WayPoint_Publisher(rclcpp::NodeOptions options)
     : Node("waypoint_publisher", options)
 {
   filename = this->declare_parameter("filename", " ");
-  follow_gps = this->declare_parameter("follow_gps", false);
+  follow_gps = this->declare_parameter("follow_gps", true);
+
+  waypoint_follower_action_client =
+      rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
+          this, "/follow_waypoints");
+  waypoint_follower_goal = nav2_msgs::action::FollowWaypoints::Goal();
 
   // follow waypoints if false, else follow gps points
   if (!follow_gps)
   {
-    waypoint_follower_action_client =
-        rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
-            this, "/follow_waypoints");
-    waypoint_follower_goal = nav2_msgs::action::FollowWaypoints::Goal();
-
     get_Waypoints();
 
     // hook into the initial pose topic
