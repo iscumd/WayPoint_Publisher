@@ -15,6 +15,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+add_compile_options(-g)
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -25,7 +26,10 @@ find_package(nav2_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
-add_executable(waypoint src/waypoint.cpp)
+add_executable(waypoint 
+  src/waypoint.cpp
+  src/main.cpp)
+  
 ament_target_dependencies(
   waypoint
   tf2_geometry_msgs
