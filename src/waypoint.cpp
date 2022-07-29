@@ -24,6 +24,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <rclcpp/time.hpp>
 
 namespace WayPoint_Publisher
 {
@@ -105,7 +106,7 @@ void WayPoint_Publisher::get_Waypoints()
             pose.pose.orientation.z = quaternion.getZ();
             pose.pose.orientation.w = quaternion.getW();
             pose.header.frame_id = "map";
-            pose.header.stamp = this->get_clock()->now();
+            pose.header.stamp = rclcpp::Time{0};
             waypoints.push_back(pose);
             break;
         }
